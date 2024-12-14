@@ -1,0 +1,28 @@
+#import file;
+#import core;
+
+#compiler_flags "-g"
+#foreign qsort :: (base: void*, nitems: u64, size: u64, func: int(void*, void*)*);
+
+greater_than :: (left: void*, right: void*) -> int {
+    return (int)((*(int*)left) > (*(int*)right));
+}
+
+main :: () {
+    input := file_read_to_string("input/1.txt");
+    rows := split(input, #char"\n");
+    left: int[];
+    right: int[];
+    for row in rows {
+        cols := split(row, #char" ");
+        left ~= atoi(cols[0].data);
+        right ~= atoi(cols[1].data);
+    }
+    qsort(left.data, left.length, sizeof(int), &greater_than);
+    qsort(right.data, right.length, sizeof(int), &greater_than);
+    total_dist := 0;
+    for i in 0..left.length {
+        total_dist += abs(left[i] - right[i]);
+    }
+    println($"{total_dist}");
+}
