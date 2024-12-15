@@ -1,0 +1,52 @@
+#import file;
+#import core;
+
+#compiler_flags "-g"
+
+main :: (argc: int, argv: char**) {
+    if argc != 2 {
+        println("must pass one argument, part (1 or 2)");
+        exit(1);
+    }
+    part := atoi(argv[1]);
+    input := file_read_to_string("input/2.txt");
+    rows := split(input, #char"\n");
+    reports: int[][];
+    for row in rows {
+        if row.length == 0 {
+            continue;
+        }
+        cols := split(row, #char" ");
+        report : int[];
+        for col in cols {
+            report ~= atoi(col.data);
+        }
+        reports ~= report;
+    }
+    if part == 1 {
+        safe_count := 0;
+        for report in reports {
+            report_safe := true;
+            increasing := report[0] < report[1];
+            previous := report[0];
+            for i in 1..report.length {
+                level := report[i];
+                if (level == previous) ||
+                    ((previous < level) != increasing) ||
+                    abs(previous - level) > 3 {
+                    report_safe = false;
+                    break;
+                }
+                previous = level;
+            }
+            if report_safe {
+                safe_count += 1;
+            }
+        }
+        println($"safe count: {safe_count}");
+    } else if part == 2 {
+    } else {
+        println("must pass part (1 or 2)");
+        exit(1);
+    }
+}
