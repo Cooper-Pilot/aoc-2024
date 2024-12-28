@@ -9,10 +9,13 @@ main :: () {
 	i := -1;
 	end := input.length;
 	total := 0;
+	mul_enabled := true;
 	while true {
 		i++;
 		if i >= end then break;
-		if input[i] != 'm' then continue;
+		if end - i > 4 && input[i..i+4] == "do()" then mul_enabled = true;
+		if end - i > 7 && input[i..i+7] == "don't()" then mul_enabled = false;
+		if part == 2 && !mul_enabled then continue;
 		if end - i <= 4 || input[i..i+4] != "mul(" then continue;
 		i += 4;
 		num_len := 0;
