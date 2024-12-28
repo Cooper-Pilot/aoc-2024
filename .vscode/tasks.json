@@ -6,8 +6,7 @@
             "type": "shell",
             "command": "ela",
             "args": [
-                "${file}",
-                "--debug"
+                "${file}"
             ],
             "problemMatcher": []
         }

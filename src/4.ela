@@ -1,0 +1,55 @@
+#import file;
+#import core;
+
+#include "utils.ela"
+
+vec2 :: struct {
+	x: int;
+	y: int;
+	to_string :: () -> string {
+		return $"{x},{y}";
+	}
+	#operator(+=) :: (other: vec2) {
+		x += other.x;
+		y += other.y;
+	}
+}
+dirs : vec2[] = {
+	{-1, -1},
+	{ 0, -1},
+	{ 1, -1},
+	{ 1,  0},
+	{ 1,  1},
+	{ 0,  1},
+	{-1,  1},
+	{-1,  0},
+}
+rows : string[];
+
+check_xmas :: (pos: vec2, dir: vec2) -> bool {
+	for c in string{"XMAS"} {
+		if pos.y < 0 || pos.y >= rows.length then return false;
+		if pos.x < 0 || pos.x >= rows[pos.y].length then return false;
+		if rows[pos.y][pos.x] != c then return false;
+		pos += dir;
+	}
+	return true;
+}
+
+main :: () {
+    part := get_part();
+    input := file_read_to_string("input/4.txt");
+	xmas_ct := 0;
+	rows = split(input, '\n');
+	for y in 0..rows.length {
+		row := rows[y];
+		if row.length == 0 then continue;
+		for x in 0..row.length {
+			if row[x] != 'X' then continue;
+			for dir in dirs {
+				if check_xmas(vec2{(int)x, (int)y}, dir) then xmas_ct++;
+			}
+		}
+	}
+	println($"xmas_ct: {xmas_ct}");
+}
