@@ -1,0 +1,13 @@
+get_part :: () -> int {
+    args := Env::args();
+    if args.length != 2 {
+        println("must pass one argument, part (1 or 2)");
+        exit(1);
+    }
+    part := atoi(args[1].data);
+    if (part != 1 && part != 2) {
+        println("must pass part (1 or 2)");
+        exit(1);
+    }
+	return part;
+}

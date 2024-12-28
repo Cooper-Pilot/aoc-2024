@@ -1,10 +1,12 @@
 #import file;
 #import core;
 
-#compiler_flags "-g"
+#include "utils.ela"
+
 reports: int[][];
 part: int;
 current_report: int[];
+
 is_safe :: (skip_index: int) -> bool {
     if skip_index >= current_report.length {
         return false;
@@ -40,16 +42,7 @@ is_safe :: (skip_index: int) -> bool {
 }
 
 main :: () {
-    args := Env::args();
-    if args.length != 2 {
-        println("must pass one argument, part (1 or 2)");
-        exit(1);
-    }
-    part = atoi(args[1].data);
-    if (part != 1 && part != 2) {
-        println("must pass part (1 or 2)");
-        exit(1);
-    }
+    part = get_part();
     input := file_read_to_string("input/2.txt");
     rows := split(input, '\n');
     for row in rows {

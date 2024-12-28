@@ -1,7 +1,8 @@
 #import file;
 #import core;
 
-#compiler_flags "-g"
+#include "utils.ela"
+
 #foreign qsort :: (base: void*, nitems: u64, size: u64, func: int(void*, void*)*);
 
 greater_than :: (left: void*, right: void*) -> int {
@@ -9,17 +10,13 @@ greater_than :: (left: void*, right: void*) -> int {
 }
 
 main :: (argc: int, argv: char**) {
-    if argc < 2 {
-        println("must pass part (1 or 2)");
-        exit(1);
-    }
-    part := atoi(argv[1]);
+    part := get_part();
     input := file_read_to_string("input/1.txt");
-    rows := split(input, #char"\n");
+    rows := split(input, '\n');
     left: int[];
     right: int[];
     for row in rows {
-        cols := split(row, #char" ");
+        cols := split(row, ' ');
         left ~= atoi(cols[0].data);
         right ~= atoi(cols[1].data);
     }
@@ -31,7 +28,7 @@ main :: (argc: int, argv: char**) {
             total_dist += abs(left[i] - right[i]);
         }
         println($"total_dist: {total_dist}");
-    } else if part == 2 {
+    } else {
         similarity := 0;
         for l in left {
             count := 0;
@@ -45,8 +42,5 @@ main :: (argc: int, argv: char**) {
             similarity += l * count;
         }
         println($"similarity: {similarity}");
-    } else {
-        println("must pass part (1 or 2)");
-        exit(1);
     }
 }
