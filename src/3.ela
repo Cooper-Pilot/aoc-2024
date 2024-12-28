@@ -1,0 +1,40 @@
+#import file;
+#import core;
+
+#include "utils.ela"
+
+main :: () {
+    part := get_part();
+    input := file_read_to_string("input/3.txt");
+	i := -1;
+	end := input.length;
+	total := 0;
+	while true {
+		i++;
+		if i >= end then break;
+		if input[i] != 'm' then continue;
+		if end - i <= 4 || input[i..i+4] != "mul(" then continue;
+		i += 4;
+		num_len := 0;
+		while isdigit(input[i]) {
+			num_len++;
+			i++;
+			if i >= end then break;
+		}
+		if num_len == 0 || num_len > 3 then continue;
+		a := atoi(input[(i-num_len)..i].data);
+		if input[i] != ',' then continue;
+		i++;
+		num_len = 0;
+		while isdigit(input[i]) {
+			num_len++;
+			i++;
+			if i >= end then break;
+		}
+		if num_len == 0 || num_len > 3 then continue;
+		b := atoi(input[(i-num_len)..i].data);
+		if input[i] != ')' then continue;
+		total += a * b;
+	}
+	println($"total: {total}");
+}
