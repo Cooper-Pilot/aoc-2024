@@ -2,51 +2,74 @@
 #import core;
 
 #compiler_flags "-g"
+reports: int[][];
+part: int;
+current_report: int[];
+is_safe :: (skip_index: int) -> bool {
+    if skip_index >= current_report.length {
+        return false;
+    }
+    first := 0;
+    second := 1;
+    if skip_index == 0 {
+        first = 1;
+        second = 2;
+    }
+    if skip_index == 1 {
+        second = 2;
+    }
+    increasing := current_report[first] < current_report[second];
+    previous := current_report[first];
+    for level_index in second..current_report.length {
+        level := current_report[level_index];
+        if level_index == skip_index {
+            continue;
+        }
+        if (level == previous) ||
+            ((previous < level) != increasing) ||
+            abs(previous - level) > 3 {
+            if part == 1 {
+                return false;
+            } else {
+                return is_safe(skip_index + 1);
+            }
+        }
+        previous = level;
+    }
+    return true;
+}
 
-main :: (argc: int, argv: char**) {
-    if argc != 2 {
+main :: () {
+    args := Env::args();
+    if args.length != 2 {
         println("must pass one argument, part (1 or 2)");
         exit(1);
     }
-    part := atoi(argv[1]);
+    part = atoi(args[1].data);
+    if (part != 1 && part != 2) {
+        println("must pass part (1 or 2)");
+        exit(1);
+    }
     input := file_read_to_string("input/2.txt");
-    rows := split(input, #char"\n");
-    reports: int[][];
+    rows := split(input, '\n');
     for row in rows {
         if row.length == 0 {
             continue;
         }
-        cols := split(row, #char" ");
+        cols := split(row, ' ');
         report : int[];
         for col in cols {
             report ~= atoi(col.data);
         }
         reports ~= report;
     }
-    if part == 1 {
-        safe_count := 0;
-        for report in reports {
-            report_safe := true;
-            increasing := report[0] < report[1];
-            previous := report[0];
-            for i in 1..report.length {
-                level := report[i];
-                if (level == previous) ||
-                    ((previous < level) != increasing) ||
-                    abs(previous - level) > 3 {
-                    report_safe = false;
-                    break;
-                }
-                previous = level;
-            }
-            if report_safe {
-                safe_count += 1;
-            }
+
+    safe_count := 0;
+    for report in reports {
+        current_report = report;
+        if is_safe(-1) {
+            safe_count += 1;
         }
-        println($"safe count: {safe_count}");
-    } else if part == 2 {
-    } else {
-        println("must pass part (1 or 2)");
-        exit(1);
     }
+    println($"safe count: {safe_count}");
 }
