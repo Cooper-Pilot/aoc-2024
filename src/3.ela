@@ -5,7 +5,7 @@
 
 main :: () {
     part := get_part();
-    input := file_read_to_string("input/3.txt");
+    input := File::read_all("input/3.txt");
 	i := -1;
 	end := input.length;
 	total := 0;

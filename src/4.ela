@@ -71,7 +71,7 @@ pos_is_x_mas :: (x: int, y: int) -> bool {
 
 main :: () {
     part := get_part();
-    input := file_read_to_string("input/4.txt");
+    input := File::read_all("input/4.txt");
 	xmas_ct := 0;
 	rows = Strings::split(input, '\n');
 	for y in 0..rows.length {

@@ -11,12 +11,12 @@ greater_than :: (left: void*, right: void*) -> int {
 
 main :: (argc: int, argv: char**) {
     part := get_part();
-    input := file_read_to_string("input/1.txt");
-    rows := split(input, '\n');
+    input := File::read_all("input/1.txt");
+    rows :=Strings::split(input, '\n');
     left: int[];
     right: int[];
     for row in rows {
-        cols := split(row, ' ');
+        cols :=Strings::split(row, ' ');
         left ~= atoi(cols[0].data);
         right ~= atoi(cols[1].data);
     }
