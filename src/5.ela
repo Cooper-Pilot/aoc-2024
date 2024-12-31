@@ -1,0 +1,64 @@
+#import file;
+#import core;
+
+#include "utils.ela"
+
+rules : int[][];
+obeys_rules :: (update: int[], index: int) -> bool {
+	elem := update[index];
+	for disallowed_elem in rules[elem] {
+		for i in 0..index {
+			if update[i] == disallowed_elem then return false;
+		}
+	}
+	return true;
+}
+
+main :: () {
+    part := get_part();
+    input := File::read_all("input/5.txt");
+	lines := Strings::split(input, '\n');
+	updates : int[][];
+	parsing_rules := true;
+	for i in 0..100 {
+		rules ~= #make(int[]);
+	}
+	for line in lines {
+		if line.length == 0 {
+			continue;
+		}
+		if parsing_rules {
+			line_split := Strings::split(line, '|');
+			if line_split.length != 2 {
+				parsing_rules = false
+			} else {
+				key := atoi(line_split[0].data);
+				value := atoi(line_split[1].data);
+				rules[key] ~= value;
+			}
+		}
+		if !parsing_rules {
+			line_split := Strings::split(line, ',');
+			update : int[];
+			for elem in line_split {
+				update ~= atoi(elem.data);
+			}
+			updates ~= update;
+		}
+	}
+	total := 0;
+	for update in updates {
+		update_valid := true;
+		for index in 0..update.length {
+			if !obeys_rules(update, index) {
+				update_valid = false;
+				break;
+			}
+		}
+		if update_valid {
+			mid := update.length / 2;
+			total += update[mid];
+		}
+	}
+	println($"total: {total}");
+}
