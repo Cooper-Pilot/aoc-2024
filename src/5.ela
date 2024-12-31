@@ -4,14 +4,44 @@
 #include "utils.ela"
 
 rules : int[][];
-obeys_rules :: (update: int[], index: int) -> bool {
-	elem := update[index];
-	for disallowed_elem in rules[elem] {
-		for i in 0..index {
-			if update[i] == disallowed_elem then return false;
+obeys_rules :: (update: int[]) -> bool {
+	for index in 0..update.length {
+		for disallowed_page in rules[update[index]] {
+			for i in 0..index {
+				if update[i] == disallowed_page then return false;
+			}
 		}
 	}
 	return true;
+}
+
+insert :: (update: int[], page: int, index: int) -> int[] {
+	new_update : int[];
+	for i in 0..update.length + 1 {
+		if i < index then new_update ~= update[i]
+		if i == index then new_update ~= page;
+		if i > index then new_update ~= update[i - 1];
+	}
+	return new_update;
+}
+
+correct_order :: (update: int[]) -> int[] {
+	corrected_update : int[];
+	for page_index in 0..update.length {
+		page := update[page_index];
+		if page_index == 0 {
+			corrected_update ~= page;
+			continue;
+		}
+		for i in (corrected_update.length + 1)..0 {
+			new_update := insert(corrected_update, page, i - 1);
+			if obeys_rules(new_update) {
+				corrected_update = new_update;
+				break;
+			}
+		}
+	}
+	return corrected_update;
 }
 
 main :: () {
@@ -40,24 +70,23 @@ main :: () {
 		if !parsing_rules {
 			line_split := Strings::split(line, ',');
 			update : int[];
-			for elem in line_split {
-				update ~= atoi(elem.data);
+			for page in line_split {
+				update ~= atoi(page.data);
 			}
 			updates ~= update;
 		}
 	}
 	total := 0;
 	for update in updates {
-		update_valid := true;
-		for index in 0..update.length {
-			if !obeys_rules(update, index) {
-				update_valid = false;
-				break;
-			}
-		}
-		if update_valid {
+		order_correct := obeys_rules(update);
+		if part == 1 && order_correct {
 			mid := update.length / 2;
 			total += update[mid];
+		}
+		if part == 2 && !order_correct {
+			corrected_update := correct_order(update);
+			mid := corrected_update.length / 2;
+			total += corrected_update[mid];
 		}
 	}
 	println($"total: {total}");
